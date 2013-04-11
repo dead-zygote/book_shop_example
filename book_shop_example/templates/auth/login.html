@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block "title" %}Вход{% endblock %}
+
+{% block "main" %}
+    <div class="container">
+        <form action="{% url 'auth.views.login' %}" method="post">
+            {% csrf_token %}
+            <div class="field">
+                <label for="username">Логин</label><br />
+                <input type="text" name="username" id="username" />
+            </div>
+            <div>
+                <label for="password">Пароль</label><br />
+                <input type="password" name="password" id="password" />
+            </div>
+            <input type="submit" value="Войти" />
+        </form>
+    </div>
+{% endblock %}
