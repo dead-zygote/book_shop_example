@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block "title" %}{{ book.title }}{% endblock %}
+{% block "main" %}
+    <div class="book-details">
+        <div class="image-container">
+            <img src="{{ book.image.url }}" />
+        </div>
+        <div class="information">
+            <h1>{{ book.title }}</h1>
+            <div class="authors">
+                {% for author in book.authors.all %}
+                    <a href="{{ author.get_absolute_url }}">{{ author.name }}</a>{% if not forloop.last %}, {% endif %}
+                {% endfor %}
+            </div>
+            <div class="description">{{ book.description }}</div>
+            <div class="buy">
+                <span class="price">{{ book.price }} руб.</span>
+                {% ifequal book.quantity 0 %}
+                    -- нет в наличии --
+                {% else %}
+                    {% if user.is_authenticated %}
+                        <form action="{% url 'cart.views.add_cart_item' %}" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="book_id" value="{{ book.id }}" />
+                            <select name="quantity">
+                                {% for i in book.quantity_values %}
+                                    <option value="{{ i }}">{{ i }}</option>
+                                {% endfor %}
+                            </select>
+                            <input type="submit" value="Купить" />
+                        </form>
+                    {% endif %}
+                {% endifequal %}
+            </div>
+            <div class="other">
+                <div>
+                    Издательство:
+                    <a href="{{ book.publisher.get_absolute_url }}">
+                        {{ book.publisher.name }}
+                    </a>
+                </div>
+                <div>ISBN: {{ book.isbn }}</div>
+                {% if book.year %}
+                    <div>Год: {{ book.year }}</div>
+                {% endif %}
+                {% if book.printed_copies_count %}
+                    <div>Тираж: {{ book.printed_copies_count }}</div>
+                {% endif %}
+                {% if book.pages_count %}
+                    <div>Количество страниц: {{ book.pages_count }}</div>
+                {% endif %}
+                {% if book.cover_type %}
+                    <div>Обложка: {{ book.cover_type.name }}</div>
+                {% endif %}
+                {% if book.height and book.width and book.thickness %}
+                    <div>Размеры: {{ book.height }}×{{ book.width }}×{{ book.thickness }} мм</div>
+                {% endif %}
+                {% if book.weight %}
+                    <div>Вес: {{ book.weight }} г</div>
+                {% endif %}
+                {% if book_categories %}
+                    <div>
+                        Категории:
+                        {% for category in book_categories %}
+                            <a href="{{ category.get_absolute_url }}">{{ category.name }}</a>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="bottom-links"><a href='/'>Вернуться к списку</a></div>
+        </div>
+    </div>
+{% endblock %}

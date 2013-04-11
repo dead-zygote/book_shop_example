@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block "title" %}{{ heading }}{% endblock %}
+
+{% block "main" %}
+    <h1>{{ heading }}</h1>
+    <div class="search">
+        <form action="{{ request.path }}" method="get">
+            <input type="text" name="search" value="{{ search|default_if_none:'' }}" />
+            <input type="submit" value="Искать" />
+        </form>
+    </div>
+    <div class="sorting">
+        Сортировать по:
+        {% if sort_by == "title" %}
+            <a href="{{ request.path }}?sort_by=-title">названию</a>
+        {% else %}
+            <a href="{{ request.path }}?sort_by=title">названию</a>
+        {% endif %}
+        |
+        {% if sort_by == "year" %}
+            <a href="{{ request.path }}?sort_by=-year">году</a>
+        {% else %}
+            <a href="{{ request.path }}?sort_by=year">году</a>
+        {% endif %}
+    </div>
+    <div class="sidebar">
+        <ul>
+            {% for category in categories %}
+                <li><a href="{{ category.get_absolute_url }}">{{ category.name }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="content">
+        {% for book in books %}
+            <div class="book">
+                <div class="image-container">
+                    {% if book.image %}
+                        <img src="{{ book.small_image.url }}" />
+                    {% endif %}
+                </div>
+                <div class="information">
+                    <div class="title">{{ book.title }}</div>
+                    <div class="description">
+                        {{ book.description|truncatewords:30 }}
+                    </div>
+                    <div class="other">
+                        <span class="price">
+                            {{ book.price }} руб.
+                        </span>
+                        <a href="{{ book.get_absolute_url }}">Подробнее</a>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+        <div class="pagination">
+            {% if books.has_previous %}
+                <a href="{{ request.path }}?page={{ books.previous_page_number }}{% if search %}&search={{ search }}{% endif %}">&lt; Назад</a>
+            {% endif %}
+            Страница {{ books.number }}/{{ books.paginator.num_pages }}
+            {% if books.has_next %}
+                <a href="{{ request.path }}?page={{ books.next_page_number }}{% if search %}&search={{ search }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}">Вперед &gt;</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

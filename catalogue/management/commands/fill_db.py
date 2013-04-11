@@ -42,6 +42,7 @@ class Command(BaseCommand):
                 description=book_data['description'],
                 price=book_data['price'],
                 quantity=10,
+                for_sale=True,
                 )
             for author_name in book_data['authors']:
                 author = Author.objects.get_or_create(name=author_name)[0]

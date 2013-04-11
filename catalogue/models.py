@@ -11,11 +11,32 @@ from django.db.models import (
     DateTimeField,
     ForeignKey,
     ManyToManyField,
+    Manager,
+    Q,
     )
 
+from django.db.models.query import QuerySet
 from django.core.validators import MinValueValidator
 from imagekit.models import ImageSpecField
 from imagekit.processors import ResizeToFit
+
+
+class BookQuerySet(QuerySet):
+    @property
+    def for_sale(self):
+        return self.filter(for_sale=True)
+
+    def search(self, query):
+        return self.filter(
+            Q(title__icontains=query) | Q(isbn__icontains=query))
+
+
+class BookManager(Manager):
+    def get_query_set(self):
+        return BookQuerySet(self.model)
+
+    def __getattr__(self, name):
+        return getattr(self.get_query_set(), name)
 
 
 class Book(Model):
@@ -55,11 +76,13 @@ class Book(Model):
     created_at = DateTimeField(u'Время создания', auto_now_add=True)
     changed_at = DateTimeField(u'Время изменения', auto_now=True)
 
+    objects = BookManager()
+
     def __unicode__(self):
         return self.title
 
     def get_absolute_url(self):
-        return '/book/%i' % self.id
+        return '/books/%i' % self.id
 
     def author_names(self):
         return ', '.join(author.name for author in self.authors.all())
@@ -95,7 +118,7 @@ class Author(Model):
         return self.name
 
     def get_absolute_url(self):
-        return '/author/%i' % self.id
+        return '/authors/%i' % self.id
 
     class Meta:
         verbose_name = u'Автор'
@@ -109,7 +132,7 @@ class Category(Model):
         return self.name
 
     def get_absolute_url(self):
-        return '/category/%i' % self.id
+        return '/categories/%i' % self.id
 
     class Meta:
         verbose_name = u'Категория'

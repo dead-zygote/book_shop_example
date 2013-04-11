@@ -1,0 +1,35 @@
+<html>
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <title>{% block "title" %}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/shop.css" type="text/css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
+    <script src="/static/js/shop.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="nav"> /
+            <a href="{% url 'catalogue.views.show_books' %}">Каталог</a> /
+            {% if user.is_authenticated %}
+                <a href="{% url 'cart.views.show_cart_items' %}">Корзина</a>
+                {% if user.cart.items.count > 0 %}
+                    ({{ user.cart.items.count }})
+                {% endif %} /
+                <a href="{% url 'ordering.views.show_orders' %}">Профиль</a> /
+                <a href="{% url 'auth.views.logout' %}">Выход</a>
+            {% else %}
+                <a href="{% url 'auth.views.login' %}">Вход</a> /
+                <a href="{% url 'auth.views.register' %}">Регистрация</a>
+            {% endif %} /
+        </div>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% block "main" %}{% endblock %}
+    </div>
+</body>
+</html>

@@ -1,0 +1,153 @@
+body {
+    font-family: 'Trebuchet MS', 'Verdana';
+    font-size: 14px;
+}
+
+table {
+    font-size: 14px;
+}
+
+.container {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.sidebar {
+    float: right;
+    width: 200px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 6px 6px 6px #ddd;
+    padding: 6px;
+}
+
+.content {
+    float: left;
+    width: 560px;
+}
+
+.book {
+    /* border-bottom: 1px solid gray; */
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.book:nth-child(even) {
+    background-color: #eee;
+}
+
+.book .image-container {
+    display: inline-block;
+    width: 90px;
+    vertical-align: top;
+    padding-left: 10px;
+}
+
+.book .information {
+    display: inline-block;
+    width: 430px;
+    vertical-align: top;
+}
+
+.book .information .title {
+    color: brown;
+    font-weight: bold;
+}
+
+.book .information .other {
+    text-align: right;
+}
+
+.book .price {
+    font-weight: bold;
+    color: green;
+}
+
+.book-details {
+    margin-top: 20px;
+}
+
+.book-details .buy {
+    margin-top: 8px;
+    margin-bottom: 8px;
+}
+
+.book-details .buy form {
+    display: inline;
+}
+
+form.delete {
+    display: inline;
+}
+
+.book-details .price {
+    font-weight: bold;
+    color: green;
+}
+
+.book-details .image-container {
+    display: inline-block;
+    vertical-align: top;
+    width: 220px;
+}
+
+.book-details .information {
+    display: inline-block;
+    vertical-align: top;
+    width: 550px;
+}
+
+.book-details .other {
+    background-color: #eee;
+    padding: 10px;
+}
+
+.book-details .bottom-links {
+    text-align: center;
+    margin-top: 10px;
+}
+
+a {
+    color: brown;
+}
+
+a:visited {
+    color: brown;
+}
+
+.pagination {
+    margin-top: 20px;
+    margin-bottom: 40px;
+    text-align: right;
+}
+
+table td {
+    vertical-align: top;
+}
+
+table.addresses td.actions {
+    width: 140px;
+}
+
+table.addresses td.information {
+    width: 380px;
+}
+
+table.addresses {
+    margin-bottom: 20px;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+table td, table th {
+    /* border: 1px solid #ccc; */
+    border: none;
+    padding: 8px;
+}
+
+form table td {
+    border: none;
+}
