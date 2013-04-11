@@ -1,2 +1,3 @@
 *.pyc
 *.sqlite3
+/book_shop_example/static/uploads/

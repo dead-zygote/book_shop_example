@@ -95,7 +95,7 @@ class Author(Model):
         return self.name
 
     def get_absolute_url(self):
-        return '/authors/%i' % self.id
+        return '/author/%i' % self.id
 
     class Meta:
         verbose_name = u'Автор'
