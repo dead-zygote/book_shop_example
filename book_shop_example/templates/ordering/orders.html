@@ -1,0 +1,18 @@
+{% extends "profile.html" %}
+{% block "title" %}Заказы{% endblock %}
+{% block "heading" %}Заказы{% endblock %}
+{% block "content" %}
+    {% if orders.count == 0 %}
+        У вас пока нет заказов. Для начала выберите интересующие вас
+        <a href="{% url 'catalogue.views.show_books' %}">книги</a>.
+    {% else %}
+        <table>
+            {% for order in orders %}
+                <tr>
+                    <td><a href="{{ order.get_absolute_url }}">{{ order }}</a></td>
+                    <td>{{ order.state_name }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

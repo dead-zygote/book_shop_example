@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block "title" %}Профиль{% endblock %}
+{% block "main" %}
+    <h1>{% block "heading" %}Профиль пользователя{% endblock %}</h1>
+    <div class="container">
+        <div class="sidebar">
+            <a href="{% url 'ordering.views.show_addresses' %}">Адреса</a><br />
+            <a href="{% url 'ordering.views.show_orders' %}">Заказы</a><br />
+            <a href="/settings">Настройки</a><br />
+        </div>
+        {% block "content" %}
+        <div class="content">
+            Добро пожаловать, {{ user.username }}! Здесь вы можете просматривать информацию о ваших заказах, редактировать инофрмацию об адресах доставки и изменять настройки.
+        </div>
+        {% endblock %}
+    </div>
+{% endblock %}

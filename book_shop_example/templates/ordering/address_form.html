@@ -1,0 +1,28 @@
+{% csrf_token %}
+<table>
+    <tr>
+        <td>{{ form.postcode.label_tag }} *</td>
+        <td>{{ form.postcode }}</td>
+        <td>{{ form.postcode.errors }}</td>
+    </tr>
+    <tr>
+        <td>{{ form.region.label_tag }} *</td>
+        <td>{{ form.region }}</td>
+        <td>{{ form.region.errors }}</td>
+    </tr>
+    <tr>
+        <td>{{ form.city.label_tag }} *</td>
+        <td>{{ form.city }}</td>
+        <td>{{ form.city.errors }}</td>
+    </tr>
+    <tr>
+        <td>{{ form.other_information.label_tag }} *</td>
+        <td>{{ form.other_information }}</td>
+        <td>{{ form.other_information.errors }}</td>
+    </tr>
+    <tr>
+        <td>{{ form.receiver_name.label_tag }} *</td>
+        <td>{{ form.receiver_name }}</td>
+        <td>{{ form.receiver_name.errors }}</td>
+    </tr>
+</table>

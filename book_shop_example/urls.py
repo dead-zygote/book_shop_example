@@ -19,8 +19,13 @@ urlpatterns += patterns('cart.views',
     )
 
 urlpatterns += patterns('ordering.views',
-    url(r'^orders$', 'show_orders'),
-    url(r'^orders/add$', 'add_order'),
+    url(r'^orders$', 'show_orders', name='orders'),
+    url(r'^orders/add$', 'add_order', name='order'),
+    url(r'^orders/delete$', 'delete_order', name='delete_order'),
+    url(r'^addresses$', 'show_addresses', name='addresses'),
+    url(r'^addresses/add$', 'add_address', name='add_address'),
+    url(r'^addresses/(\d+)/change$', 'change_address', name='change_address'),
+    url(r'^addresses/(\d+)/delete$', 'delete_address', name='delete_address'),
     )
 
 urlpatterns += patterns('auth.views',

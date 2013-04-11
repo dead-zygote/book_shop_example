@@ -1,0 +1,29 @@
+{% extends "profile.html" %}
+{% block "title" %}Заказ №{{ order.id }}{% endblock %}
+{% block "heading" %}Заказ №{{ order.id }}{% endblock %}
+{% block "content" %}
+    <h2>Список книг</h2>
+    <table>
+        {% for item in items %}
+            <tr>
+                <td><a href="{{ item.book.get_absolute_url }}">{{ item.book.title }}</a></td>
+                <td>{{ item.price }} р.</td>
+                <td>{{ item.quantity }} шт.</td>
+            </tr>
+        {% endfor %}
+    </table>
+    <h2>Адрес доставки</h2>
+    <div>
+        Почтовый индекс: {{ order.postcode }}<br/>
+        Регион: {{ order.region }}<br/>
+        Город: {{ order.city }}<br/>
+        Улица, дом, квартира: {{ order.other_information }}<br/>
+        Имя получателя: {{ order.receiver_name }}
+    </div>
+    {% if order.state == 'new' %}
+        <form action="{% url 'delete_order' order.id %}" method="post" class="delete" data-message="Вы действительно хотите отменить этот заказ?">
+            {% csrf_token %}
+            <input type="submit" value="Отменить заказ" />
+        </form>
+    {% endif %}
+{% endblock %}

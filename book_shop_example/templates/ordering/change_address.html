@@ -1,0 +1,10 @@
+{% extends "profile.html" %}
+{% block "title" %}Изменение адреса{% endblock %}
+{% block "heading" %}Изменение адреса{% endblock %}
+{% block "content" %}
+    <form action="{% url 'change_address' address.id %}" method="post">
+        {% include "ordering/address_form.html" %}
+        <input type="submit" value="Сохранить изменения" />
+        <a href="{% url 'addresses' %}">Отмена</a>
+    </form>
+{% endblock %}

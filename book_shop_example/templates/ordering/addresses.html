@@ -1,0 +1,27 @@
+{% extends "profile.html" %}
+{% block "title" %}Адреса{% endblock %}
+{% block "heading" %}Адреса{% endblock %}
+{% block "content" %}
+    {% if addresses.count == 0 %}
+        У вас пока нет адресов. Чтобы делать заказы,
+        вы должны добавить хотя бы один.
+    {% else %}
+        <table class="addresses">
+            {% for address in addresses %}
+                <tr>
+                    <td class="information">
+                        {{ address }}
+                    </td>
+                    <td class="actions">
+                        <a href="{% url 'change_address' address.id %}">Изменить</a>
+                        <form class="delete" action="{% url 'delete_address' address.id %}" method="post" data-message="Вы действительно хотите удалить этот адрес?">
+                            {% csrf_token %}
+                            <input type="submit" value="Удалить" />
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+    <a href="{% url 'add_address' %}">Добавить адрес</a>
+{% endblock %}
