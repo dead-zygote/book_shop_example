@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block "title" %}Корзина{% endblock %}
+{% block "main" %}
+    <div class="container">
+        <h1>Корзина</h1>
+        <div class="content">
+            {% if cart_items.count == 0 %}
+                Ваша корзина пуста. Выберите интересующие вас товары <a href="{% url 'catalogue.views.show_books' %}">здесь</a>.
+            {% else %}
+                <table>
+                    {% for item in cart_items %}
+                        <tr>
+                            <td><a href="{{ item.book.get_absolute_url }}">{{ item.book.title }}</a></td>
+                            <td>{{ item.book.price }} р.</td>
+                            <td>{{ item.quantity }} шт.</td>
+                            <td>
+                                <form action="{% url 'cart.views.delete_cart_item' item.id %}" method="post" class="delete" data-message="Вы действительно хотите удалить эту книгу из корзины?">
+                                    {% csrf_token %}
+                                    <input type="submit" value="Удалить" />
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+                <form method="post" action="{% url 'cart.views.empty_cart' %}" class="delete" data-message="Вы действительно хотите очистить корзину?">
+                    {% csrf_token %}
+                    <input type="submit" value="Очистить корзину" />
+                </form>
+            {% endif %}
+        </div>
+    </div>
+    <div class="sidebar">
+        <p>Выбрано товаров на сумму {{ user.cart.total_price }} руб.</p>
+        <p><a href="{% url 'ordering.views.add_order' %}">Оформить заказ</a></p>
+    </div>
+{% endblock %}

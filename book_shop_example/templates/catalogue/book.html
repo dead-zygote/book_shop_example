@@ -21,7 +21,7 @@
                     {% if user.is_authenticated %}
                         <form action="{% url 'cart.views.add_cart_item' %}" method="post">
                             {% csrf_token %}
-                            <input type="hidden" name="book_id" value="{{ book.id }}" />
+                            <input type="hidden" name="book" value="{{ book.id }}" />
                             <select name="quantity">
                                 {% for i in book.quantity_values %}
                                     <option value="{{ i }}">{{ i }}</option>

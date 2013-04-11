@@ -11,7 +11,7 @@
         <div class="nav"> /
             <a href="{% url 'catalogue.views.show_books' %}">Каталог</a> /
             {% if user.is_authenticated %}
-                <a href="{% url 'cart.views.show_cart_items' %}">Корзина</a>
+                <a href="{% url 'cart.views.show_cart' %}">Корзина</a>
                 {% if user.cart.items.count > 0 %}
                     ({{ user.cart.items.count }})
                 {% endif %} /
