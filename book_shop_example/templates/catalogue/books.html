@@ -36,7 +36,7 @@
             <div class="book">
                 <div class="image-container">
                     {% if book.image %}
-                        <img src="{{ book.small_image.url }}" />
+                        <img src="{{ book.small_image.url }}" alt="{{ book.title }}" />
                     {% endif %}
                 </div>
                 <div class="information">
