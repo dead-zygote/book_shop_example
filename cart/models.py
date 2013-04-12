@@ -19,9 +19,6 @@ class Cart(Model):
             .only('quantity', 'book__price')
         return sum(item.book.price * item.quantity for item in items)
 
-    def build_order(self):
-        return order
-
 
 class CartItem(Model):
     cart = ForeignKey(Cart, related_name='items')
