@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block "title" %}Оформление заказа{% endblock %}
+{% block "main" %}
+    <h1>Оформление заказа</h1>
+    <form method="post" action="{% url 'add_order' %}">
+        {% csrf_token %}
+        <h2>Список книг</h2>
+        <table>
+            {% for item in cart_items %}
+                <tr>
+                    <td><input type="checkbox" name="cart_item_ids" value="{{ item.id }}" checked="checked" /></td>
+                    <td><a href="{{ item.book.get_absolute_url }}" target="_blank">{{ item.book.title }}</a></td>
+                    <td>{{ item.book.price }} р.</td>
+                    <td>{{ item.quantity }} шт.</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <h2>Адрес доставки</h2>
+        <table>
+        {% for address in addresses %}
+            <tr>
+                <td><input type="radio" name="address_id" value="{{ address.id }}" {% if forloop.first %}checked="checked"{% endif %} /></td>
+                <td>{{ address }}</td>
+            </tr>
+        {% endfor %}
+        </table>
+        <input type="submit" value="Подтвердить заказ" />
+    </form>
+    {% for id in cart_item_ids %}
+        {{ id }}
+    {% endfor %}
+{% endblock %}

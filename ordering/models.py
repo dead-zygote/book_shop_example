@@ -1,11 +1,13 @@
 # coding: utf-8
 from django.db.models import (
     Model,
+    Manager,
     CharField,
     DecimalField,
     IntegerField,
     DateTimeField,
     ForeignKey,
+    F,
     )
 
 from django.db.models import signals
@@ -35,6 +37,8 @@ class Order(Model):
         ('ready', u'готов'),
         ('sent', u'отправлен'),
     )
+    STATES_DICT = dict(STATES)
+
     user = ForeignKey(User, verbose_name=u'Пользователь',
         related_name='orders')
     state = CharField(u'Статус', max_length=10, choices=STATES,
@@ -50,7 +54,7 @@ class Order(Model):
     changed_at = DateTimeField(u'Время изменения', auto_now=True)
 
     def state_name(self):
-        return dict(self.STATES)[self.state]
+        return self.STATES_DICT[self.state]
 
     def total_price(self):
         return sum(item.price * item.quantity for item in self.items.all())
@@ -63,32 +67,25 @@ class Order(Model):
         self.receiver_name = address.receiver_name
 
     def is_possible(self):
-        if self.state in ['new', 'paid']:
-            items = self.items.all().select_related('book') \
-                .only('quantity', 'book__quantity')
-            # TODO: попробовать обойтись запросом
-            for item in items:
-                if item.quantity > item.book.quantity:
-                    return False
-        return True
+        if self.state in ('ready', 'sent'):
+            return True
+        return self.items.filter(quantity__gt=F('book__quantity')).exists()
 
     def prepare_books(self):
-        for item in self.items.all().select_related('book'):
-            book = item.book
-            book.quantity -= item.quantity
-            book.save()
+        for item in self.items.all():
+            Book.objects.filter(id=item.book_id).update(
+                quantity = F('quantity') - item.quantity)
 
     def unprepare_books(self):
         for item in self.items.all():
-            book = item.book
-            book.quantity += item.quantity
-            book.save()
+            Book.objects.filter(id=item.book_id).update(
+                quantity = F('quantity') + item.quantity)
 
     def __unicode__(self):
         return u'Заказ №%i' % self.id
 
     def get_absolute_url(self):
-        return '/order/%i' % self.id
+        return '/orders/%i' % self.id
 
     class Meta:
         verbose_name = u'Заказ'
@@ -117,7 +114,16 @@ def before_order_save(sender, instance, **kwargs):
 def before_order_delete(sender, instance, **kwargs):
     if instance.state == 'ready':
         instance.unprepare_books()
-    
+
+
+class OrderItemManager(Manager):
+    def create_from_cart_item(self, cart_item):
+        return self.create(
+            book=cart_item.book,
+            price=cart_item.book.price,
+            quantity=cart_item.quantity,
+            )
+
 
 class OrderItem(Model):
     order = ForeignKey(Order, related_name='items')
@@ -126,9 +132,11 @@ class OrderItem(Model):
         validators=[MinValueValidator(1)])
     quantity = IntegerField(u'Количество', validators=[MinValueValidator(1)])
 
+    objects = OrderItemManager()
+
     def admin_book_link(self):
         book = self.book
-        return '<a href="/admin/shop/book/%i/" target="_blank">%s</a>' % (
+        return '<a href="/admin/catalogue/book/%i/" target="_blank">%s</a>' % (
             book.id, book.title)
 
     admin_book_link.allow_tags = True
