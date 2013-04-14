@@ -69,7 +69,7 @@ class Order(Model):
     def is_possible(self):
         if self.state in ('ready', 'sent'):
             return True
-        return self.items.filter(quantity__gt=F('book__quantity')).exists()
+        return not self.items.filter(quantity__gt=F('book__quantity')).exists()
 
     def prepare_books(self):
         for item in self.items.all():

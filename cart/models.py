@@ -15,7 +15,6 @@ from django.db import connection
 class Cart(Model):
     user = OneToOneField(User, null=True)
 
-    @property
     def total_price(self):
         cursor = connection.cursor()
         cursor.execute(
@@ -25,10 +24,14 @@ class Cart(Model):
             ON cart_cartitem.book_id = catalogue_book.id
             WHERE cart_cartitem.cart_id = %s
             """, [self.id])
-        return cursor.fetchone()[0]
+        return cursor.fetchone()[0] or 0
+
+    def is_empty(self):
+        return not self.items.exists()
 
 
 class CartItem(Model):
     cart = ForeignKey(Cart, related_name='items')
     book = ForeignKey(Book, related_name='cart_items')
-    quantity = IntegerField(u'Количество', validators=[MinValueValidator(1)])
+    quantity = IntegerField(u'Количество', default=1,
+        validators=[MinValueValidator(1)])

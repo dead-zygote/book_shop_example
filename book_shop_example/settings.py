@@ -128,6 +128,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'imagekit',
     # project apps:
+    'auth',
     'core',
     'catalogue',
     'cart',
