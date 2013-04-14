@@ -15,7 +15,7 @@ class CartTest(TestCase):
         book2 = BookFactory()
         cart.items.create(book=book1, quantity=1)
         cart.items.create(book=book2, quantity=2)
-        price = float(book1.price + book2.price * 2)
+        price = book1.price + book2.price * 2
         self.assertEqual(cart.total_price(), price)
 
     def test_is_empty_when_empty(self):

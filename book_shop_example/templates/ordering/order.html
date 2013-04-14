@@ -12,6 +12,9 @@
             </tr>
         {% endfor %}
     </table>
+    <p>
+        Стоимость заказа: {{ order.total_price }} руб.
+    </p>
     <h2>Адрес доставки</h2>
     <div>
         Почтовый индекс: {{ order.postcode }}<br/>

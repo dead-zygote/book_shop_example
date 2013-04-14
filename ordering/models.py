@@ -11,8 +11,10 @@ from django.db.models import (
     )
 
 from django.db.models import signals
+from django.db import connection
 from django.dispatch import receiver
 from django.core.validators import MinValueValidator
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from catalogue.models import Book
 
@@ -53,11 +55,30 @@ class Order(Model):
     created_at = DateTimeField(u'Время создания', auto_now_add=True)
     changed_at = DateTimeField(u'Время изменения', auto_now=True)
 
+    def clean(self):
+        if self.state_effect() == 'prepare' and not self.is_possible():
+            raise ValidationError(u'Невозможно изменить состояние заказа.')
+
     def state_name(self):
         return self.STATES_DICT[self.state]
 
+    def state_effect(self):
+        if self.initial_state in ('new', 'paid') \
+        and self.state in ('ready', 'sent'):
+            return 'prepare'
+        elif self.initial_state in ('ready', 'sent') \
+        and self.state in ('new', 'paid'):
+            return 'unprepare'
+
     def total_price(self):
-        return sum(item.price * item.quantity for item in self.items.all())
+        cursor = connection.cursor()
+        cursor.execute(
+            """
+            SELECT sum(quantity * price)
+            FROM ordering_orderitem
+            WHERE order_id = %s
+            """, [self.id])
+        return cursor.fetchone()[0] or 0
 
     def set_address(self, address):
         self.postcode = address.postcode
@@ -67,8 +88,6 @@ class Order(Model):
         self.receiver_name = address.receiver_name
 
     def is_possible(self):
-        if self.state in ('ready', 'sent'):
-            return True
         return not self.items.filter(quantity__gt=F('book__quantity')).exists()
 
     def prepare_books(self):
@@ -99,14 +118,9 @@ def after_order_init(sender, instance, **kwargs):
 
 @receiver(signals.pre_save, sender=Order)
 def before_order_save(sender, instance, **kwargs):
-    if instance.initial_state in ('new', 'paid') \
-    and instance.state in ('ready', 'sent'):
-        if instance.is_possible():
-            instance.prepare_books()
-        else:
-            instance.state = instance.initial_state
-    elif instance.initial_state in ('ready', 'sent') \
-    and instance.state in ('new', 'paid'):
+    if instance.state_effect() == 'prepare' and instance.is_possible():
+        instance.prepare_books()
+    elif instance.state_effect() == 'unprepare':
         instance.unprepare_books()
 
 

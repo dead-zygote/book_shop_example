@@ -52,13 +52,16 @@ def add_order(request):
         cart_item_ids = [item_id for item_id in posted_cart_item_ids
             if item_id.isdigit()]
         cart_items = user.cart.items.filter(id__in=cart_item_ids)
-        order = Order(user=user)
-        order.set_address(address)
-        order.save()
-        for cart_item in cart_items:
-            order.items.create_from_cart_item(cart_item)
-        cart_items.delete()
-        return redirect(show_orders)
+        if cart_items.exists():
+            order = Order(user=user)
+            order.set_address(address)
+            order.save()
+            for cart_item in cart_items:
+                order.items.create_from_cart_item(cart_item)
+            cart_items.delete()
+            return redirect(show_orders)
+        else:
+            messages.error(request, u'Вы не выбрали книги.')
     return render(request, 'ordering/add_order.html', {
         'cart_items': user.cart.items.all(),
         'addresses': user.addresses.all(),
