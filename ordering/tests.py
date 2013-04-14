@@ -42,12 +42,10 @@ class OrderTest(TestCase):
         order.prepare_books()
         book1 = Book.objects.get(pk=book1.pk)
         book2 = Book.objects.get(pk=book2.pk)
-        actual_quantities = (book1.quantity, book2.quantity)
-        expected_quantities = (
-            book1_quantity - order_item1_quantity,
-            book2_quantity - order_item2_quantity,
-            )
-        self.assertEqual(actual_quantities, expected_quantities)
+        self.assertEqual(book1.quantity,
+            book1_quantity - order_item1_quantity)
+        self.assertEqual(book2.quantity,
+            book2_quantity - order_item2_quantity,)
 
     def test_unprepare_books(self):
         order = OrderFactory()
@@ -62,29 +60,34 @@ class OrderTest(TestCase):
         order.unprepare_books()
         book1 = Book.objects.get(pk=book1.pk)
         book2 = Book.objects.get(pk=book2.pk)
-        actual_quantities = (book1.quantity, book2.quantity)
-        expected_quantities = (
-            book1_quantity + order_item1_quantity,
-            book2_quantity + order_item2_quantity,
-            )
-        self.assertEqual(actual_quantities, expected_quantities)
+        self.assertEqual(book1.quantity,
+            book1_quantity + order_item1_quantity)
+        self.assertEqual(book2.quantity,
+            book2_quantity + order_item2_quantity)
 
-    def test_set_address(self):
+
+    def _makeOrderWithAddress(self):
         order = Order()
         address = AddressFactory.build()
         order.set_address(address)
-        order_address_data = (
-            order.postcode,
-            order.region,
-            order.city,
-            order.other_information,
-            order.receiver_name,
-            )
-        address_data = (
-            address.postcode,
-            address.region,
-            address.city,
-            address.other_information,
-            address.receiver_name,
-            )
-        self.assertEqual(order_address_data, address_data)
+        return order, address
+
+    def test_postcode_after_set_address(self):
+        order, address = self._makeOrderWithAddress()
+        self.assertEqual(order.postcode, address.postcode)
+
+    def test_region_after_set_address(self):
+        order, address = self._makeOrderWithAddress()
+        self.assertEqual(order.region, address.region)
+
+    def test_city_after_set_address(self):
+        order, address = self._makeOrderWithAddress()
+        self.assertEqual(order.city, address.city)
+
+    def test_other_information_after_set_address(self):
+        order, address = self._makeOrderWithAddress()
+        self.assertEqual(order.other_information, address.other_information)
+
+    def test_receiver_name_after_set_address(self):
+        order, address = self._makeOrderWithAddress()
+        self.assertEqual(order.receiver_name, address.receiver_name)
